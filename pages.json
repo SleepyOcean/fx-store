@@ -22,6 +22,10 @@
 				"navigationBarTitleText": "uni-app"
 			}
         }
+        ,{
+            "path" : "pages/home/home",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -9,7 +9,7 @@
 					if (e.platform == 'android') {
 						Vue.prototype.CustomBar = e.statusBarHeight + 50;
 					} else {
-						Vue.prototype.CustomBar = e.statusBarHeight + 45;
+						Vue.prototype.CustomBar = e.statusBarHeight + 50;
 					};
 					// #endif
 					// #ifdef MP-WEIXIN

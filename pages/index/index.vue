@@ -1,44 +1,48 @@
 <template>
 	<view class="index-style">
-		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
-			<block slot="backText">返回</block>
-			<block slot="content">导航栏</block>
+		<cu-custom bgColor="bg-gradual-blue">
+			<block slot="content">封鑫小店</block>
 		</cu-custom>
-		<cu-bottom-bar :tabs="tabs"></cu-bottom-bar>
+		<order v-if="currentIndex === 1"></order>
+		<cu-bottom-bar :tabs="tabs" :current="currentIndex" @currentChange="currentTabChange"></cu-bottom-bar>
 	</view>
 </template>
 
 <script>
+	import order from '../order/order';
 	export default {
+		components: {
+			order
+		},
 		data() {
 			return {
 				tabs: [
 					{
 						name: '首页',
-						pagePath: '/pages/index/index',
-						iconPath: '/static/tabbar/basics_cur.png',
+						iconPath: '/static/tabbar/basics.png',
 						selectedIconPath: '/static/tabbar/basics_cur.png'
 					},
 					{
 						name: '订单',
-						pagePath: '/pages/order/order',
 						iconPath: '/static/tabbar/component.png',
 						selectedIconPath: '/static/tabbar/component_cur.png'
 					},
 					{
 						name: '我的',
-						pagePath: '/pages/about/about',
 						iconPath: '/static/tabbar/about.png',
 						selectedIconPath: '/static/tabbar/about_cur.png'
 					}
-				]
+				],
+				currentIndex: 1
 			}
 		},
 		onLoad() {
 
 		},
 		methods: {
-
+			currentTabChange (index) {
+				this.currentIndex = index;
+			}
 		}
 	}
 </script>
