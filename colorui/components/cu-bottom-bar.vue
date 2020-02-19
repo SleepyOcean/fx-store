@@ -2,9 +2,9 @@
 	<view class="cu-bar tabbar bg-white">
 		<view class="action" v-for="(tab, index) in tabs" :key="index" @click="selectTab(index)">
 			<view class="cuIcon-cu-image">
-				<image :src="selectIndex === index ? tab.selectedIconPath : tab.iconPath"></image>
+				<image :src="current === index ? tab.selectedIconPath : tab.iconPath"></image>
 			</view>
-			<view :class="selectIndex === index ? 'text-green' : 'text-gray'">{{tab.name}}</view>
+			<view :class="current === index ? 'text-green' : 'text-gray'">{{tab.name}}</view>
 		</view>
 	</view>
 </template>
@@ -13,21 +13,21 @@
 	export default {
 		data() {
 			return {
-				selectIndex: 0
+				
 			}
 		},
 		props: {
 			tabs: {
 				type: Array,
 				required: true
+			},
+			current: {
+				type: Number
 			}
 		},
 		methods: {
 			selectTab (index) {
-				uni.switchTab({
-					url: this.tabs[index].pagePath
-				});
-				this.$forceUpdate();
+				this.$emit('currentChange', index);
 			}
 		}
 	}
