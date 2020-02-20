@@ -3,7 +3,9 @@
 		<cu-custom bgColor="bg-gradual-blue">
 			<block slot="content">封鑫小店</block>
 		</cu-custom>
-		<order v-if="currentIndex === 1"></order>
+		<view class="page-content">
+			<order v-if="currentIndex === 1"></order>
+		</view>
 		<cu-bottom-bar :tabs="tabs" :current="currentIndex" @currentChange="currentTabChange"></cu-bottom-bar>
 	</view>
 </template>
@@ -48,4 +50,9 @@
 </script>
 
 <style>
+	.page-content {
+		width: 100%;
+		height: calc(100% - 50px - env(safe-area-inset-bottom) / 2 - 50px);
+		overflow: auto;
+	}
 </style>

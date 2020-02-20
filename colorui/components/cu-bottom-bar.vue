@@ -13,7 +13,7 @@
 	export default {
 		data() {
 			return {
-				
+
 			}
 		},
 		props: {
@@ -36,7 +36,7 @@
 <style>
 	.cu-bar {
 		bottom: 0;
-		position: absolute;
+		position: fixed;
 		width: 100%;
 	}
 </style>

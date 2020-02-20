@@ -1,7 +1,7 @@
 <template>
-	<view class="cu-card">
-		<view class="cu-item shadow padding-lr-sm margin-xs">
-			<view class="padding-tb-sm flex-sub cf">
+	<view class="cu-card solid-bottom">
+		<view class="cu-item shadow padding-lr-sm margin-lr-sm margin-top-sm">
+			<view class="padding-tb-sm flex-sub cf" @click="jumpToOrderDetail">
 				<view class="text-sm fl">
 					<text class="text-grey">{{order.orderTime}}</text>
 				</view>
@@ -24,9 +24,20 @@
 				</view>
 			</view>
 			<view class="cf padding-tb-sm">
-				<button class="cu-btn line-mauve round fr" v-if="order.deliveryStatus == -1">分配订单</button>
-				<button class="cu-btn line-mauve round fr margin-left-xs" v-if="order.deliveryStatus == 0">确认完成</button>
-				<button class="cu-btn line-mauve round fr margin-left-xs" v-if="order.deliveryStatus == 0">删除订单</button>
+				<button class="cu-btn line-mauve round fr margin-left-xs" v-if="order.deliveryStatus == -1" @click="btClick(-1)">分配订单</button>
+				<button class="cu-btn line-mauve round fr margin-left-xs" v-if="order.deliveryStatus == 0" @click="btClick(0)">确认完成</button>
+				<button class="cu-btn line-mauve round fr" @click="btClick(1)">删除订单</button>
+			</view>
+		</view>
+		<view class="cu-modal bottom-modal" :class="modalShowing?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white">
+					<view class="action text-green">确定</view>
+					<view class="action text-blue" @tap="modalShowing = false">取消</view>
+				</view>
+				<view class="padding-xl">
+					Modal 内容。
+				</view>
 			</view>
 		</view>
 	</view>
@@ -36,7 +47,7 @@
 	export default {
 		data() {
 			return {
-
+				modalShowing: false
 			}
 		},
 		props: {
@@ -49,7 +60,16 @@
 			}
 		},
 		methods: {
-
+			jumpToOrderDetail () {
+				uni.navigateTo({
+					url: 'detail'
+				});
+			},
+			btClick(type){
+				if(type === -1){
+					this.modalShowing = true;
+				}
+			}
 		}
 	}
 </script>
@@ -64,7 +84,7 @@
 		}
 
 		&.second-row {
-			height: 80px;
+			height: 60px;
 			justify-content: space-between;
 		}
 
@@ -78,11 +98,11 @@
 
 		.fi-img-box {
 			height: 100%;
-			width: calc(100% - 80px);
+			width: calc(100% - 60px);
 
 			.f-ib-img {
 				height: 100%;
-				width: 80px;
+				width: 60px;
 				float: left;
 				margin-right: 5px;
 			}
