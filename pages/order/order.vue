@@ -1,110 +1,90 @@
 <template>
-	<view class="order" @click="test">
-		<so-order-item :order="item" v-for="(item, index) in orders" :key="index" :goods="goods"></so-order-item>
-		<view class="full-width text-center padding-sm">
-			<text class="text-xs text-grey">———— 到底啦~ ————</text>
-		</view>
-	</view>
+    <view class="order full-width">
+        <scroll-view scroll-x class="order-tab bg-green nav text-center">
+            <view class="cu-item" :class="0==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="0">
+                <text class="cuIcon-list padding-right-xs"></text> 全部
+            </view>
+            <view class="cu-item" :class="1==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="1">
+                <text class="cuIcon-remind padding-right-xs"></text> 未配送
+                <view class="cu-avatar" style="width: 0">
+                    <view class="cu-tag badge bg-mauve" style="position: relative;top: -15px;">1</view>
+                </view>
+            </view>
+            <view class="cu-item" :class="2==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="2">
+                <text class="cuIcon-deliver padding-right-xs"></text> 配送中
+            </view>
+            <view class="cu-item" :class="3==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="3">
+                <text class="cuIcon-roundcheck padding-right-xs"></text> 配送完成
+            </view>
+        </scroll-view>
+        <view class="full-size" v-if="orders && orders.length > 0">
+            <so-order-item :order="item" v-for="(item, index) in orders" :key="index" :goods="goods" :address="address"></so-order-item>
+            <view class="full-width text-center padding-sm">
+                <text class="text-xs text-grey">———— 到底啦~ ————</text>
+            </view>
+        </view>
+        <view class="full-size flex align-center justify-center" style="height: 600px" v-else>
+            <view class="full-width">
+                <view class="full-width text-center">
+                    <image src="../../static/fx-store-logo.png" style="height: 60px; width: 60px;"></image>
+                </view>
+                <view class="full-width text-sm text-grey text-center">还没有订单欸~</view>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
-	import soOrderItem from '../../colorui/components/so-order-item.vue'
-	export default {
-		components: {
-			'so-order-item': soOrderItem
-		},
-		data() {
-			return {
-				orders: [{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '0',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '0',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				},{
-					orderTime: '2020-02-19 12:33:44',
-					deliveryStatus: '-1',
-					deliveryMan: '李白',
-					goods: '1213123:7,3424242:12'
-				}],
-				goods: {
-					'1213123': {
-						imgUrl: '//img.alicdn.com/bao/uploaded/i1/TB1QiLXL9rqK1RjSZK9SutyypXa.jpg_240x5000Q60s0.jpg_.webp'
-					},
-					'3424242': {
-						imgUrl: '//img.alicdn.com/bao/uploaded/i1/TB1KzQUL4TpK1RjSZFMSuvG_VXa.jpg_240x5000Q60s0.jpg_.webp'
-					}
-				}
-			}
-		},
-		mounted() {
-			let self = this;
-			uni.request({
-				url: 'http://localhost:8001/order/list',
-				method: 'POST',
-				data: {
-					deliveryStatus: '-1'
-				},
-				success: function({
-					data
-				}) {
-					console.log(data);
-					if (data.status === 200) {
-						self.orders = data.resultList;
-						self.goods = data.extra.goods;
-					}
-				}
-			});
-		},
-		methods: {
-			test() {
-				console.log(this.orders);
-			}
-		}
-	}
+    import soOrderItem from '../../colorui/components/so-order-item.vue'
+    import request from "../../util/request";
+
+    export default {
+        components: {
+            'so-order-item': soOrderItem
+        },
+        data() {
+            return {
+                tab: {
+                    current: 0
+                },
+                orders: [],
+                goods: {},
+                address: {}
+            }
+        },
+        mounted() {
+            let self = this;
+			request.post('/order/list', {}).then((data => {
+                if (data.status === 200) {
+                    self.orders = data.resultList;
+                    self.goods = data.extra.goods;
+                    self.address = data.extra.address;
+                }
+            }));
+        },
+        methods: {
+            orderTabSelect ({currentTarget}) {
+                this.tab.current = currentTarget.dataset.id;
+                let params = {};
+                this.tab.current === '0' || (params.deliveryStatus = this.tab.current - 1);
+                request.post('/order/list', params).then((data => {
+                    if (data.status === 200) {
+                        this.orders = data.resultList;
+                        this.goods = data.extra.goods;
+                        this.address = data.extra.address;
+                    }
+                }));
+            }
+        }
+    }
 </script>
 
-<style>
-.order {
-	width: 100%;
-}
+<style lang="scss">
+    .order {
+        .order-tab {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+    }
 </style>

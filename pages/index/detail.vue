@@ -2,9 +2,11 @@
     <view class="index-style">
         <cu-custom bgColor="bg-gradual-blue" :isBack="true">
             <block slot="backText">返回</block>
-            <block slot="content">封鑫小店</block>
+            <block slot="content">订单详情</block>
         </cu-custom>
-        <order-detail></order-detail>
+        <view class="full-width" :style="contentStyle">
+            <order-detail :orderId="orderId"></order-detail>
+        </view>
     </view>
 </template>
 
@@ -16,12 +18,20 @@
         },
         data() {
             return {
-            	page: ''
+            	page: '',
+                orderId: ''
 			}
         },
-		onLoad(option) {
-
-		},
+        onLoad(option) {
+            if(option.orderId){
+                this.orderId = option.orderId;
+            }
+        },
+        computed: {
+            contentStyle() {
+                return `height: calc(100% - ${this.CustomBar}px)`;
+            }
+        },
         methods: {}
     }
 </script>
