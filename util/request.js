@@ -1,5 +1,5 @@
 let request = {};
-let host = 'https://dev.sleepyocean.cn:9050';
+let host = 'https://store.sleepyocean.cn:9350';
 request.post = function (url, params) {
     console.log('request请求');
     return new Promise((resolve => {

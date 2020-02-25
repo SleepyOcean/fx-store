@@ -14,7 +14,7 @@
             <view class="action">
                 <view class="cu-avatar round"
                       style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
-                <text class="padding-left-sm text-sm">{{order.deliveryManInfo.split(':')[1]}}</text>
+                <text class="padding-left-sm text-sm">{{order.deliveryManInfo ? order.deliveryManInfo.split(':')[1] : ''}}</text>
             </view>
             <view class="action">
                 <button class="cu-btn line-grey round fr sm">电话小哥</button>
@@ -41,7 +41,7 @@
                 <text class="text-grey text-sm">联系人</text>
             </view>
             <view class="action">
-                <text class="text-sm text-bold">{{address[order.addressId].contactName}}</text>
+                <text class="text-sm text-bold">{{order.contactName}}</text>
             </view>
         </view>
         <view class="cu-bar bg-white">
@@ -49,7 +49,7 @@
                 <text class="text-grey text-sm">联系方式</text>
             </view>
             <view class="action">
-                <text class="text-sm text-bold">{{address[order.addressId].contact}}</text>
+                <text class="text-sm text-bold">{{order.contact}}</text>
             </view>
         </view>
         <view class="cu-bar bg-white margin-bottom-sm">
@@ -57,15 +57,15 @@
                 <text class="text-grey text-sm">收货地址</text>
             </view>
             <view class="action">
-                <text class="text-sm text-bold">{{address[order.addressId].contactAddress}}</text>
+                <text class="text-sm text-bold">{{order.contactAddress}}</text>
             </view>
         </view>
         <view class="cu-card margin-sm">
             <view class="cu-item padding-lr-sm">
-                <view class="cu-bar bg-white solid-bottom goods-item padding-tb-sm"
+                <view class="cu-bar bg-white solid-bottom goods-item padding-tb-sm" v-if="order.goods"
                       v-for="(goodsItem, index) in order.goods.split(',')" :key="index">
                     <view class="gi-img-box">
-                        <image class="full-size" :src="goods[goodsItem.split(':')[0]].imgUrl"></image>
+                        <image v-if="goodsItem" class="full-size" :src="goods[goodsItem.split(':')[0]].imgUrl"></image>
                     </view>
                     <view class="gi-info-box padding-left-sm">
                         <view class="full-width">
@@ -158,7 +158,6 @@
             return {
                 order: {},
                 goods: {},
-                address: {},
                 deliveryMen: ['刘备', '关羽', '张飞'],
                 pickerSelectedIndex: -1
             }
@@ -174,7 +173,6 @@
                 if (data.status === 200) {
                     self.order = data.resultList[0];
                     self.goods = data.extra.goods;
-                    self.address = data.extra.address;
                 }
             });
         },

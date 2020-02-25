@@ -29,8 +29,8 @@
                 <view class="padding-top flex-sub cf">
                     <view class="fl">
                         <text class="cuIcon-my"></text>
-                        <text class="padding-left-xs">{{address[order.addressId].contactName}}</text>
-                        <text class="text-sm text-grey padding-left-sm">{{address[order.addressId].contactAddress}}</text>
+                        <text class="padding-left-xs">{{order.contactName}}</text>
+                        <text class="text-sm text-grey padding-left-sm">{{order.contactAddress}}</text>
                         <text class="text-sm text-gray padding-left-sm">{{order.expectTime}}</text>
                     </view>
                 </view>
@@ -78,9 +78,6 @@
                 required: true
             },
             goods: {
-                type: Object
-            },
-            address: {
                 type: Object
             }
         },

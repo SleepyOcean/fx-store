@@ -18,7 +18,7 @@
             </view>
         </scroll-view>
         <view class="full-size" v-if="orders && orders.length > 0">
-            <so-order-item :order="item" v-for="(item, index) in orders" :key="index" :goods="goods" :address="address"></so-order-item>
+            <so-order-item :order="item" v-for="(item, index) in orders" :key="index" :goods="goods"></so-order-item>
             <view class="full-width text-center padding-sm">
                 <text class="text-xs text-grey">———— 到底啦~ ————</text>
             </view>
@@ -48,8 +48,7 @@
                     current: 0
                 },
                 orders: [],
-                goods: {},
-                address: {}
+                goods: {}
             }
         },
         mounted() {
@@ -58,7 +57,6 @@
                 if (data.status === 200) {
                     self.orders = data.resultList;
                     self.goods = data.extra.goods;
-                    self.address = data.extra.address;
                 }
             }));
         },
@@ -71,7 +69,6 @@
                     if (data.status === 200) {
                         this.orders = data.resultList;
                         this.goods = data.extra.goods;
-                        this.address = data.extra.address;
                     }
                 }));
             }
