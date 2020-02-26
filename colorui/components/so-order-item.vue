@@ -26,7 +26,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="padding-top flex-sub cf">
+                <view class="padding-tb flex-sub cf">
                     <view class="fl">
                         <text class="cuIcon-my"></text>
                         <text class="padding-left-xs">{{order.contactName}}</text>
@@ -35,12 +35,12 @@
                     </view>
                 </view>
             </view>
-            <view class="cf padding-tb-sm" v-if="order.deliveryStatus < 2">
+            <view class="cf padding-bottom-sm" v-if="order.deliveryStatus < 2">
                 <button class="cu-btn bg-orange round fr margin-left-xs" v-if="order.deliveryStatus == 0"
-                        @click="btClick(-1)">快捷操作
+                        @click="modalShowing = true">快捷操作
                 </button>
                 <button class="cu-btn bg-olive round fr margin-left-xs" v-if="order.deliveryStatus == 1"
-                        @click="btClick(0)">确认完成
+                        @click="btClick(2)">确认完成
                 </button>
                 <button class="cu-btn mauve round fr" @click="btClick(1)" v-if="0">删除订单</button>
             </view>
@@ -48,8 +48,8 @@
         <view class="cu-modal bottom-modal" :class="modalShowing?'show':''">
             <view class="cu-dialog">
                 <view class="cu-bar bg-white">
-                    <view class="action text-green">确定</view>
                     <view class="action text-grey" @tap="modalShowing = false">取消</view>
+                    <view class="action text-green" @tap="btClick(1)">确定</view>
                 </view>
                 <view class="padding-xl cu-form-group">
                     <picker @change="pickerChange" :value="index" :range="picker" @click="modalShowing = false">
@@ -64,6 +64,7 @@
 </template>
 
 <script>
+    import request from "../../util/request";
     export default {
         data() {
             return {
@@ -88,18 +89,29 @@
                 });
             },
             btClick(type) {
-                if (type === -1) {
-                    this.modalShowing = true;
-                }
+                this.modalShowing = false;
+                let params = {
+                    adminCode: 123,
+                    status: type,
+                    orderId: this.order.orderId
+                };
+                request.post('/order/updateStatus', params).then(data => {
+                    uni.showToast({
+                        title: '更新完成',
+                        duration: 2000,
+                        icon: 'success'
+                    });
+                    this.$emit('statusChange');
+                });
             },
 			pickerChange (index) {
-            	console.log(index);
+                this.btClick(1);
 			},
             getOrderStatus () {
                 switch (this.order.deliveryStatus) {
                     case -1: return '未确认';
                     case 0: return '未配送';
-                    case 1: return '配送中 - ' + this.order.deliveryManInfo.split(':')[1];
+                    case 1: return '配送中' + (this.order.deliveryManInfo ? ' - ' + this.order.deliveryManInfo.split(':')[1] : '');
                     case 2: return '配送完成';
                 }
             },

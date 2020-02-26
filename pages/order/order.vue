@@ -7,7 +7,7 @@
             <view class="cu-item" :class="1==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="1">
                 <text class="cuIcon-remind padding-right-xs"></text> 未配送
                 <view class="cu-avatar" style="width: 0">
-                    <view class="cu-tag badge bg-mauve" style="position: relative;top: -15px;">1</view>
+                    <view class="cu-tag badge bg-mauve" style="position: relative;top: -15px;">{{unDeliveryCount}}</view>
                 </view>
             </view>
             <view class="cu-item" :class="2==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="2">
@@ -18,7 +18,7 @@
             </view>
         </scroll-view>
         <view class="full-size" v-if="orders && orders.length > 0">
-            <so-order-item :order="item" v-for="(item, index) in orders" :key="index" :goods="goods"></so-order-item>
+            <so-order-item  @statusChange="statusChange" :order="item" v-for="(item, index) in orders" :key="index" :goods="goods"></so-order-item>
             <view class="full-width text-center padding-sm">
                 <text class="text-xs text-grey">———— 到底啦~ ————</text>
             </view>
@@ -47,6 +47,7 @@
                 tab: {
                     current: 0
                 },
+                unDeliveryCount: 0,
                 orders: [],
                 goods: {}
             }
@@ -59,6 +60,14 @@
                     self.goods = data.extra.goods;
                 }
             }));
+            let params = {
+                deliveryStatus: 0
+            };
+            request.post('/order/list', params).then((data => {
+                if (data.status === 200) {
+                    this.unDeliveryCount = data.resultList.length;
+                }
+            }));
         },
         methods: {
             orderTabSelect ({currentTarget}) {
@@ -69,8 +78,20 @@
                     if (data.status === 200) {
                         this.orders = data.resultList;
                         this.goods = data.extra.goods;
+                        if(params.deliveryStatus == 0){
+                            this.unDeliveryCount = data.resultList.length;
+                        }
                     }
                 }));
+            },
+            statusChange(){
+                this.orderTabSelect({
+                    currentTarget: {
+                        dataset: {
+                            id: this.tab.current
+                        }
+                    }
+                });
             }
         }
     }

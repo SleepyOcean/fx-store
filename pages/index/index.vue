@@ -35,6 +35,11 @@
 						name: '订单',
 						iconPath: '/static/tabbar/component.png',
 						selectedIconPath: '/static/tabbar/component_cur.png'
+					},
+					{
+						name: '我的',
+						iconPath: '/static/tabbar/about.png',
+						selectedIconPath: '/static/tabbar/about_cur.png'
 					}
 				],
 				currentIndex: 1

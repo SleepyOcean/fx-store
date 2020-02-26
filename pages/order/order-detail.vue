@@ -6,8 +6,7 @@
                 订单状态
             </view>
             <view class="action">
-                <text class="lg text-green"></text>
-                {{getOrderStatus()}}
+                <text class="lg text-green">{{getOrderStatus()}}</text>
             </view>
         </view>
         <view class="cu-bar bg-white solid-bottom margin-bottom-sm" v-if="order.deliveryStatus === 1">
@@ -63,13 +62,13 @@
         <view class="cu-card margin-sm">
             <view class="cu-item padding-lr-sm">
                 <view class="cu-bar bg-white solid-bottom goods-item padding-tb-sm" v-if="order.goods"
-                      v-for="(goodsItem, index) in order.goods.split(',')" :key="index">
+                      v-for="(goodsItem, index) in getGoods()" :key="index">
                     <view class="gi-img-box">
                         <image v-if="goodsItem" class="full-size" :src="goods[goodsItem.split(':')[0]].imgUrl"></image>
                     </view>
                     <view class="gi-info-box padding-left-sm">
                         <view class="full-width">
-                            <text class="">{{goods[goodsItem.split(':')[0]].goodsName}}</text>
+                            <text>{{goods[goodsItem.split(':')[0]].goodsName}}</text>
                         </view>
                         <view class="full-width">
                             <text class="text-grey text-xs">数量:{{goodsItem.split(':')[1]}}  描述:{{goods[goodsItem.split(':')[0]].goodsDesc}}
@@ -151,37 +150,30 @@
 </template>
 
 <script>
-    import request from "../../util/request";
     export default {
         component: {},
         data() {
             return {
-                order: {},
-                goods: {},
                 deliveryMen: ['刘备', '关羽', '张飞'],
                 pickerSelectedIndex: -1
             }
         },
         props: {
-            orderId: {
-                type: String
+            order: {
+                type: Object,
+                required: true
+            },
+            goods: {
+                type: Object
             }
         },
-        mounted() {
-            let self = this;
-            request.post('/order/list', {orderId: self.orderId}).then(data => {
-                if (data.status === 200) {
-                    self.order = data.resultList[0];
-                    self.goods = data.extra.goods;
-                }
-            });
-        },
         methods: {
-            getOrderStatus () {
+            getOrderStatus() {
+                console.error('getstatus '+this.order.deliveryStatus);
                 switch (this.order.deliveryStatus) {
                     case -1: return '未确认';
-                    case 0: return '未配送';
-                    case 1: return '配送中 - ' + this.order.deliveryManInfo.split(':')[1];
+                    case 0: return '待配送';
+                    case 1: return '配送中 - ' + (this.order.deliveryManInfo ? ' - ' + this.order.deliveryManInfo.split(':')[1] : '');
                     case 2: return '配送完成';
                 }
             },
@@ -192,6 +184,10 @@
                     icon: 'none'
                 });
                 this.pickerSelectedIndex = detail.value;
+            },
+            getGoods(){
+                console.error('getgoods '+this.order.goods);
+                return this.order.goods ? this.order.goods.split(',') : [];
             }
         }
     }
