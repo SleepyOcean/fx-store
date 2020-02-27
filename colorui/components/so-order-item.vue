@@ -85,7 +85,7 @@
         methods: {
             jumpToOrderDetail() {
                 uni.navigateTo({
-                    url: `detail?orderId=${this.order.orderId}`
+                    url: `../detail/detail?orderId=${this.order.orderId}`
                 });
             },
             btClick(type) {

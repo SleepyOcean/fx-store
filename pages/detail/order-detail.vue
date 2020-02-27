@@ -6,10 +6,18 @@
                 订单状态
             </view>
             <view class="action">
-                <text class="lg text-green">{{getOrderStatus()}}</text>
+                <text class="lg text-green">{{order.deliveryStatus}}</text>
             </view>
         </view>
-        <view class="cu-bar bg-white solid-bottom margin-bottom-sm" v-if="order.deliveryStatus === 1">
+        <view class="cu-bar bg-white solid-bottom margin-bottom-sm padding-lr" v-if="order.deliveryStatus === '待配送'">
+            <view class="title">配送员</view>
+            <picker @change="pickDeliveryMan" :value="pickerSelectedIndex" :range="deliveryMen">
+                <view class="picker text-grey">
+                    {{pickerSelectedIndex>-1?deliveryMen[pickerSelectedIndex]:'点击选择配送员'}}
+                </view>
+            </picker>
+        </view>
+        <view class="cu-bar bg-white solid-bottom margin-bottom-sm" v-else>
             <view class="action">
                 <view class="cu-avatar round"
                       style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
@@ -18,14 +26,6 @@
             <view class="action">
                 <button class="cu-btn line-grey round fr sm">电话小哥</button>
             </view>
-        </view>
-        <view class="cu-bar bg-white solid-bottom margin-bottom-sm padding-lr" v-if="order.deliveryStatus === 0">
-            <view class="title">配送员</view>
-            <picker @change="pickDeliveryMan" :value="pickerSelectedIndex" :range="deliveryMen">
-                <view class="picker text-grey">
-                    {{pickerSelectedIndex>-1?deliveryMen[pickerSelectedIndex]:'点击选择配送员'}}
-                </view>
-            </picker>
         </view>
         <view class="cu-bar bg-white">
             <view class="action">
@@ -62,16 +62,16 @@
         <view class="cu-card margin-sm">
             <view class="cu-item padding-lr-sm">
                 <view class="cu-bar bg-white solid-bottom goods-item padding-tb-sm" v-if="order.goods"
-                      v-for="(goodsItem, index) in getGoods()" :key="index">
+                      v-for="(goodsItem, index) in order.goods" :key="index">
                     <view class="gi-img-box">
-                        <image v-if="goodsItem" class="full-size" :src="goods[goodsItem.split(':')[0]].imgUrl"></image>
+                        <image v-if="goodsItem" class="full-size" :src="goodsItem.imgUrl"></image>
                     </view>
                     <view class="gi-info-box padding-left-sm">
                         <view class="full-width">
-                            <text>{{goods[goodsItem.split(':')[0]].goodsName}}</text>
+                            <text>{{goodsItem.goodsName}}</text>
                         </view>
                         <view class="full-width">
-                            <text class="text-grey text-xs">数量:{{goodsItem.split(':')[1]}}  描述:{{goods[goodsItem.split(':')[0]].goodsDesc}}
+                            <text class="text-grey text-xs">数量:{{goodsItem.amount}}  描述:{{goodsItem.goodsDesc}}
                             </text>
                         </view>
                         <view class="foi-price text-xxl padding-tb-xs">
@@ -137,7 +137,7 @@
                 <text class="text-price text-xl text-bold text-red">{{order.totalPrice}}</text>
             </view>
         </view>
-        <view class="box margin-tb-lg padding-lr-lg" v-if="order.deliveryStatus === 0">
+        <view class="box margin-tb-lg padding-lr-lg" v-if="order.deliveryStatus === '待配送'">
             <view class="cu-bar btn-group">
                 <button class="cu-btn bg-green round">保存</button>
                 <button class="cu-btn bg-blue round">提交</button>
@@ -162,21 +162,9 @@
             order: {
                 type: Object,
                 required: true
-            },
-            goods: {
-                type: Object
             }
         },
         methods: {
-            getOrderStatus() {
-                console.error('getstatus '+this.order.deliveryStatus);
-                switch (this.order.deliveryStatus) {
-                    case -1: return '未确认';
-                    case 0: return '待配送';
-                    case 1: return '配送中 - ' + (this.order.deliveryManInfo ? ' - ' + this.order.deliveryManInfo.split(':')[1] : '');
-                    case 2: return '配送完成';
-                }
-            },
             pickDeliveryMan ({detail}) {
                 uni.showToast({
                     title: '等待配送员确认 . . . ',
@@ -186,7 +174,6 @@
                 this.pickerSelectedIndex = detail.value;
             },
             getGoods(){
-                console.error('getgoods '+this.order.goods);
                 return this.order.goods ? this.order.goods.split(',') : [];
             }
         }
