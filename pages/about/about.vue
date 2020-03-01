@@ -4,7 +4,7 @@
 			<view class="cu-bar margin-bottom-sm padding-top-lg">
 				<view class="action">
 					<view class="cu-avatar round xl"
-						  :style="`background-image:url(${userInfo.avatarUrl})`"></view>
+						  :style="'background-image:url('+userInfo.avatarUrl+')'"></view>
 					<text class="padding-left-sm text-lg margin-left-lg" v-if="userInfo.name">{{userInfo.name}}</text>
 					<button class="padding-left-sm text-lg margin-left-lg main-bg-color login-button" v-else
 							open-type="getUserInfo" @getuserinfo="loginIntoWechat" withCredentials="true">
