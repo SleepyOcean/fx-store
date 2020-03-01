@@ -9,7 +9,7 @@
                 <text class="lg text-green">{{order.deliveryStatus}}</text>
             </view>
         </view>
-        <view class="cu-bar bg-white solid-bottom margin-bottom-sm padding-lr" v-if="order.deliveryStatus === '待配送'">
+        <view class="cu-bar bg-white solid-bottom margin-bottom-sm padding-lr" v-if="0">
             <view class="title">配送员</view>
             <picker @change="pickDeliveryMan" :value="pickerSelectedIndex" :range="deliveryMen">
                 <view class="picker text-grey">
@@ -137,9 +137,9 @@
                 <text class="text-price text-xl text-bold text-red">{{order.totalPrice}}</text>
             </view>
         </view>
-        <view class="box margin-tb-lg padding-lr-lg" v-if="order.deliveryStatus === '待配送'">
+        <view class="box margin-tb-lg padding-lr-lg" v-if="0">
             <view class="cu-bar btn-group">
-                <button class="cu-btn bg-green round">保存</button>
+                <button class="cu-btn main-bg-color round">保存</button>
                 <button class="cu-btn bg-blue round">提交</button>
             </view>
         </view>

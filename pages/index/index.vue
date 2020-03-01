@@ -1,6 +1,6 @@
 <template>
 	<view class="index-style">
-		<cu-custom bgColor="bg-green">
+		<cu-custom bgColor="main-bg-color">
 			<block slot="content">封鑫小店</block>
 		</cu-custom>
 		<view class="page-content" :style="contentStyle">

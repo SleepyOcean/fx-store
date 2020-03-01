@@ -1,6 +1,6 @@
 <template>
     <view class="order full-width">
-        <scroll-view scroll-x class="order-tab bg-green nav text-center">
+        <scroll-view scroll-x class="order-tab main-bg-color nav text-center">
             <view class="cu-item" :class="0==tab.current?'text-white cur':''" @tap="orderTabSelect" data-id="0">
                 <text class="cuIcon-list padding-right-xs"></text> 全部
             </view>
@@ -45,35 +45,28 @@
         data() {
             return {
                 tab: {
-                    current: 0
+                    current: 1
                 },
                 unDeliveryCount: 0,
                 orders: [],
-                goods: {}
+                goods: {},
+                timeTask: ''
             }
         },
+        onPullDownRefresh() {
+            this.search();
+        },
         mounted() {
-            let self = this;
-			request.post('/order/list', {}).then((data => {
-                if (data.status === 200) {
-                    self.orders = data.resultList;
-                    self.goods = data.extra.goods;
-                }
-            }));
-            let params = {
-                deliveryStatus: 0
-            };
-            request.post('/order/list', params).then((data => {
-                if (data.status === 200) {
-                    this.unDeliveryCount = data.resultList.length;
-                }
-            }));
+            this.search();
+            this.timeTask = setInterval(this.search, 30 * 1000);
         },
         methods: {
-            orderTabSelect ({currentTarget}) {
-                this.tab.current = currentTarget.dataset.id;
+            search () {
                 let params = {};
                 this.tab.current === '0' || (params.deliveryStatus = this.tab.current - 1);
+                this.requestOrder(params);
+            },
+            requestOrder (params) {
                 request.post('/order/list', params).then((data => {
                     if (data.status === 200) {
                         this.orders = data.resultList;
@@ -83,6 +76,20 @@
                         }
                     }
                 }));
+                let params1 = {
+                    deliveryStatus: 0
+                };
+                request.post('/order/list', params1).then((data => {
+                    if (data.status === 200) {
+                        this.unDeliveryCount = data.resultList.length;
+                    }
+                }));
+            },
+            orderTabSelect ({currentTarget}) {
+                this.tab.current = currentTarget.dataset.id;
+                let params = {};
+                this.tab.current === '0' || (params.deliveryStatus = this.tab.current - 1);
+                this.requestOrder(params);
             },
             statusChange(){
                 this.orderTabSelect({

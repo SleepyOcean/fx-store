@@ -36,10 +36,10 @@
                 </view>
             </view>
             <view class="cf padding-bottom-sm" v-if="order.deliveryStatus < 2">
-                <button class="cu-btn bg-orange round fr margin-left-xs" v-if="order.deliveryStatus == 0"
-                        @click="modalShowing = true">快捷操作
+                <button class="cu-btn main-bg-color round fr margin-left-xs" v-if="order.deliveryStatus == 0"
+                        @click="btClick(1)">开始配送
                 </button>
-                <button class="cu-btn bg-olive round fr margin-left-xs" v-if="order.deliveryStatus == 1"
+                <button class="cu-btn main-bg-color round fr margin-left-xs" v-if="order.deliveryStatus == 1"
                         @click="btClick(2)">确认完成
                 </button>
                 <button class="cu-btn mauve round fr" @click="btClick(1)" v-if="0">删除订单</button>
