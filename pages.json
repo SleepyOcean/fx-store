@@ -11,6 +11,10 @@
         {
             "path" : "pages/detail/detail",
             "style" : {}
+        },
+        {
+            "path" : "pages/module/module",
+            "style" : {}
         }
     ],
     "globalStyle" : {

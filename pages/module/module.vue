@@ -2,33 +2,32 @@
     <view class="index-style">
         <cu-custom bgColor="main-bg-color" :isBack="true">
             <block slot="backText">返回</block>
-            <block slot="content">订单详情</block>
+            <block slot="content">{{currentModule.name}}</block>
         </cu-custom>
         <view class="full-width" :style="contentStyle">
-            <order-detail v-if="Object.keys(order).length>0" :order="order"></order-detail>
+            <goods-manage v-if="currentModule.type === 'goods'"></goods-manage>
         </view>
     </view>
 </template>
 
 <script>
-    import orderDetail from './order-detail.vue'
-    import request from "../../util/request";
-
+import GoodsManage from './goods-manage';
     export default {
         components: {
-            'order-detail': orderDetail
+            'goods-manage': GoodsManage
         },
         data() {
             return {
-                page: '',
-                orderId: '',
-                order: {},
-                goods: ''
+                currentModule: {
+                    type: '',
+                    name: ''
+                }
             }
         },
         onLoad(option) {
-            if (option.orderId) {
-                this.orderId = option.orderId;
+            if (option.module) {
+                this.currentModule.type = option.module;
+                this.currentModule.name = option.name;
             }
         },
         mounted() {

@@ -42,7 +42,7 @@
 						selectedIconPath: '/static/tabbar/about_cur.png'
 					}
 				],
-				currentIndex: 1
+				currentIndex: 0
 			}
 		},
 		onLoad() {

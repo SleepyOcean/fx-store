@@ -5,7 +5,7 @@
                 <view hover-class="none" class="nav-li"
                            :class="'bg-'+item.color"
                            :style="[{animation: 'show ' + ((index+1)*0.2+1) + 's 1'}]" v-for="(item,index) in elements"
-                           :key="index">
+                           :key="index" @click="moduleClick(item)">
                     <view class="nav-title">{{item.title}}</view>
                     <view class="nav-name">{{item.name}}</view>
                     <text :class="'cuIcon-' + item.cuIcon"></text>
@@ -43,11 +43,29 @@
                         name: 'statistic',
                         color: 'green',
                         cuIcon: 'rankfill'
+                    },
+                    {
+                        title: '商品管理',
+                        name: 'goods',
+                        color: 'pink',
+                        cuIcon: 'goodsnew'
+                    },
+                    {
+                        title: '分类管理',
+                        name: 'category',
+                        color: 'cyan',
+                        cuIcon: 'cascades'
                     }
-                ],
+                ]
             }
         },
-        methods: {}
+        methods: {
+            moduleClick(item){
+                uni.navigateTo({
+                    url: `../module/module?module=${item.name}&name=${item.title}`
+                });
+            }
+        }
     }
 </script>
 
