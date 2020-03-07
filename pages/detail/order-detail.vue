@@ -75,7 +75,7 @@
                             </text>
                         </view>
                         <view class="foi-price text-xxl padding-tb-xs">
-                            <text class="text-price">31.20</text>
+                            <text class="text-price">{{goodsItem.goodsPriceNow}}</text>
                         </view>
                     </view>
                 </view>

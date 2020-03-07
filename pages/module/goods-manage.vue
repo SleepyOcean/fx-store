@@ -1,34 +1,16 @@
 <template>
     <view class="full-size goods-manage">
         <view class="VerticalBox full-height">
-            <scroll-view class="VerticalNav nav" scroll-y scroll-with-animation :scroll-top="verticalNavTop">
+            <scroll-view class="VerticalNav nav" scroll-y scroll-with-animation>
                 <view class="cu-item" :class="index==currentCategory?'text-green cur':''" v-for="(item,index) in category" :key="index" @tap="categorySelect"
                       :data-id="index">
                     {{item.categoryName}}
                 </view>
             </scroll-view>
-            <scroll-view class="VerticalMain full-height" scroll-y scroll-with-animation
-                         :scroll-into-view="'main-'+mainCur" @scroll="VerticalMain">
-                <view class="cu-card margin-sm">
-                    <view class="cu-item padding-lr-sm">
-                        <view class="cu-bar bg-white solid-bottom goods-item padding-tb-sm"
-                              v-for="(goodsItem, index) in goods" :key="index">
-                            <view class="gi-img-box">
-                                <image class="full-size" :src="goodsItem.imgUrl"></image>
-                            </view>
-                            <view class="gi-info-box padding-left-sm">
-                                <view class="full-width">
-                                    <text>{{goodsItem.goodsName}}</text>
-                                </view>
-                                <view class="full-width">
-                                    <text class="text-grey text-xs">{{goodsItem.goodsDesc}}
-                                    </text>
-                                </view>
-                                <view class="foi-price text-xxl padding-tb-xs">
-                                    <text class="text-price">31.20</text>
-                                </view>
-                            </view>
-                        </view>
+            <scroll-view class="VerticalMain full-height" scroll-y scroll-with-animation @bindscrolltolower="VerticalMain">
+                <view class="cu-card margin-sm" v-for="(c, key) in categoryKeys" :key="key" v-if="key==currentCategory">
+                    <view class="cu-item padding-lr-sm margin-top-xs">
+                        <goods-item v-for="(goodsItem, index) in goods" :key="index" v-if="goodsItem.category == (key+1)" :goods="goodsItem" :category="categoryKeys" @updateAfter="updateAfter"></goods-item>
                     </view>
                 </view>
             </scroll-view>
@@ -51,58 +33,58 @@ import GoodsItem from "../../colorui/components/goods-item";
                 },
                 goods: [],
                 category: {},
+                categoryKeys: [],
                 currentCategory: 0,
-                verticalNavTop: 0,
-                load: true
+                load: true,
+                page: {
+                    start: 1,
+                    size: 0
+                }
             }
         },
-        mounted() {
-            let params = {
-                category: 1,
-                page: 1,
-                pageSize: 20
-            };
-            request.get('/goods/getByCategory', params).then(data => {
-                if (data.status === 200) {
-                    this.goods = data.resultList;
-                    this.category = data.extra.category;
-                }
+        onReachBottom(){
+            uni.showLoading({
+                title: '拼命加载中'
             });
+            this.page.start++;
+            this.requestGoods();
+        },
+        mounted() {
+            this.requestGoods();
         },
         methods: {
+            requestGoods(){
+                let params = {
+                    category: this.currentCategory+1,
+                    page: this.page.start,
+                    pageSize: this.page.size
+                };
+                request.get('/goods/getByCategory', params).then(data => {
+                    if (data.status === 200) {
+                        if(!data.resultList){
+                            this.currentCategory++;
+                            this.requestGoods();
+                            return;
+                        }
+                        this.goods = data.resultList;
+                        this.category = data.extra.category;
+                        this.categoryKeys = Object.values(this.category);
+                    }
+                });
+            },
+            updateAfter () {
+                this.requestGoods();
+            },
             categorySelect (index) {
                 this.currentCategory = index.currentTarget.dataset.id;
+                this.requestGoods();
             },
             VerticalMain(e) {
-                // #ifdef MP-ALIPAY
-                return false  //支付宝小程序暂时不支持双向联动
-                // #endifa
-                let that = this;
-                let tabHeight = 0;
-                if (this.load) {
-                    for (let i = 0; i < this.list.length; i++) {
-                        let view = uni.createSelectorQuery().select("#main-" + this.list[i].id);
-                        view.fields({
-                            size: true
-                        }, data => {
-                            this.list[i].top = tabHeight;
-                            tabHeight = tabHeight + data.height;
-                            this.list[i].bottom = tabHeight;
-                        }).exec();
-                    }
-                    this.load = false
-                }
-                let scrollTop = e.detail.scrollTop + 10;
-                for (let i = 0; i < this.list.length; i++) {
-                    if (scrollTop > this.list[i].top && scrollTop < this.list[i].bottom) {
-                        this.verticalNavTop = (this.list[i].id - 1) * 50
-                        this.currentCategory = this.list[i].id
-                        console.log(scrollTop)
-                        return false
-                    }
-                }
-            },
-            saveGoods () {
+                uni.showLoading({
+                    title: '加载中'
+                });
+                this.page.start++;
+                this.requestGoods();
             }
         }
     }
@@ -150,24 +132,5 @@ import GoodsItem from "../../colorui/components/goods-item";
     .VerticalMain {
         background-color: #f1f1f1;
         flex: 1;
-    }
-
-    .goods-item {
-        .gi-img-box {
-            width: 80px;
-            height: 80px;;
-        }
-        .gi-info-box {
-            height: 100%;
-            width: calc(100% - 80px);
-            .foi-price {
-                font-weight: bold;
-                font-size: 14px;
-            }
-            .foi-goods-count {
-                font-size: 12px;
-                color: #909399;
-            }
-        }
     }
 </style>
