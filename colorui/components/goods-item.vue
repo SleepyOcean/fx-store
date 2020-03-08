@@ -53,8 +53,14 @@
                     </view>
                     <view class="cu-form-group solid-bottom">
                         <view class="title">商品分类</view>
-                        <picker @change="pickerChange($event)" :value="categorySelected" :range="category" range-key="categoryName">
-                            <view class="uni-input">{{category[categorySelected].categoryName}}</view>
+                        <picker @change="pickerChange($event)" :value="selected.main" :range="category" range-key="categoryName">
+                            <view class="uni-input">{{category[selected.main].categoryName}}</view>
+                        </picker>
+                    </view>
+                    <view class="cu-form-group solid-bottom">
+                        <view class="title">商品子分类</view>
+                        <picker @change="subPickerChange($event)" :value="selected.sub" :range="Object.values(subCategory[selected.main])" range-key="value">
+                            <view class="uni-input">{{subCategory[selected.main][selected.sub + 1].value}}</view>
                         </picker>
                     </view>
                 </form>
@@ -75,7 +81,10 @@
         data() {
             return {
                 modalShowing: false,
-                categorySelected: 0
+                selected: {
+                    main: 0,
+                    sub: 0
+                }
             }
         },
         props: {
@@ -84,16 +93,28 @@
             },
             category: {
                 type: Array
+            },
+            subCategory: {
+                type: Object
             }
+        },
+        mounted() {
+            this.selected.main = this.goods.category - 1;
+            this.selected.sub = this.goods.subCategory - 1;
         },
         methods: {
             pickerChange: function (e) {
                 console.log('picker发送选择改变，携带值为', e.target.value)
-                this.categorySelected = e.target.value
+                this.selected.main = parseInt(e.target.value);
+            },
+            subPickerChange: function (e) {
+                console.log('subPicker发送选择改变，携带值为', e.target.value)
+                this.selected.sub = parseInt(e.target.value);
             },
             updateGoods() {
                 let params = this.goods;
-                params.category = parseInt(this.categorySelected) + 1;
+                params.category = this.selected.main + 1;
+                params.subCategory = this.selected.sub + 1;
                 request.post('/goods/update', params).then(data => {
                     this.modalShowing = false;
                     if(data.status === 200) {
@@ -119,7 +140,7 @@
     .goods-item {
         .gi-img-box {
             width: 80px;
-            height: 80px;;
+            height: 80px;
         }
 
         .gi-info-box {

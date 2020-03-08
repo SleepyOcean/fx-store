@@ -57,7 +57,29 @@
             this.search();
         },
         mounted() {
-            this.search();
+            uni.showLoading({
+                title: '查询中'
+            });
+            let params = {};
+            this.tab.current === '0' || (params.deliveryStatus = this.tab.current - 1);
+            request.post('/order/list', params).then((data => {
+                if (data.status === 200) {
+                    this.orders = data.resultList;
+                    this.goods = data.extra.goods;
+                    if(params.deliveryStatus == 0){
+                        this.unDeliveryCount = data.resultList.length;
+                    }
+                }
+                uni.hideLoading();
+            }));
+            let params1 = {
+                deliveryStatus: 0
+            };
+            request.post('/order/list', params1).then((data => {
+                if (data.status === 200) {
+                    this.unDeliveryCount = data.resultList.length;
+                }
+            }));
             this.timeTask = setInterval(this.search, 30 * 1000);
         },
         methods: {
