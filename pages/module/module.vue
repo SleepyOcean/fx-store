@@ -6,15 +6,18 @@
         </cu-custom>
         <view class="full-width" :style="contentStyle">
             <goods-manage v-if="currentModule.type === 'goods'"></goods-manage>
+            <category-manage v-if="currentModule.type === 'category'"></category-manage>
         </view>
     </view>
 </template>
 
 <script>
 import GoodsManage from './goods-manage';
+import CategoryManage from './category-manage'
     export default {
         components: {
-            'goods-manage': GoodsManage
+            'goods-manage': GoodsManage,
+            'category-manage': CategoryManage
         },
         data() {
             return {

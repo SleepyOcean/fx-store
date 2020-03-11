@@ -106,6 +106,9 @@
             pickerChange: function (e) {
                 console.log('picker发送选择改变，携带值为', e.target.value)
                 this.selected.main = parseInt(e.target.value);
+                if(Object.keys(this.subCategory[this.selected.main]).length<this.selected.sub + 1){
+                    this.selected.sub = 0;
+                }
             },
             subPickerChange: function (e) {
                 console.log('subPicker发送选择改变，携带值为', e.target.value)
